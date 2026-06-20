@@ -1,4 +1,4 @@
-// All Zone 4 signals from your PDF
+// client/src/data/signals.js
 export const signals = [
   { id: 'BN_033', label: 'Newry Harbour P1', conflicts: ['BN_027'] },
   { id: 'BN_032', label: 'Newry Harbour P2', conflicts: ['BN_027'] },
