@@ -11,16 +11,18 @@ function App() {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        fontFamily: 'Arial, sans-serif',
+        padding: '20px',
       }}>
-        <h1 style={{ color: '#fff', marginBottom: '10px' }}>
+        <h1 style={{ color: '#fff', marginBottom: '5px', fontSize: '28px' }}>
           🚆 SCR Zone 4 Signalling Simulator
         </h1>
-        <p style={{ color: '#888', marginTop: 0 }}>
-          Click any signal to toggle between RED and GREEN (interlocking enforced)
+        <p style={{ color: '#666', marginTop: '0', fontSize: '14px' }}>
+          Benton Signal Box (BN) — Newry Harbour to Faraday Road
         </p>
         <TrackDiagram />
-        <p style={{ color: '#555', fontSize: '12px', marginTop: '20px' }}>
-          Signals: BN_033, BN_032, BN_031, BN_030, BN_028, BN_027, BN_003, BN_023, BN_009, BN_011, BN_002, BN_007
+        <p style={{ color: '#333', fontSize: '11px', marginTop: '15px' }}>
+          Interlocking logic: Conflicting signals prevent SPADs (Signals Passed at Danger)
         </p>
       </div>
     </SignalProvider>
