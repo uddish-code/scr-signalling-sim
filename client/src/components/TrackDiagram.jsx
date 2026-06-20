@@ -1,5 +1,6 @@
+// client/src/components/TrackDiagram.jsx
 import { useSignals } from '../context/SignalContext';
-import { signalPositions } from '../../../data/signals.js';
+import { signalPositions } from '../data/signals.js'; // <-- FIXED PATH
 
 export default function TrackDiagram() {
   const { signals, setSignal } = useSignals();
