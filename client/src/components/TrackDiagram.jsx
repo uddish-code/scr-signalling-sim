@@ -1,6 +1,20 @@
-// client/src/components/TrackDiagram.jsx
 import { useSignals } from '../context/SignalContext';
-import { signalPositions } from '../data/signals.js'; // <-- FIXED PATH
+
+// Signal positions for Zone 4
+const signalPositions = {
+  'BN_033': { x: 80, y: 40 },
+  'BN_032': { x: 130, y: 40 },
+  'BN_031': { x: 80, y: 140 },
+  'BN_030': { x: 130, y: 140 },
+  'BN_028': { x: 180, y: 140 },
+  'BN_027': { x: 180, y: 40 },
+  'BN_003': { x: 300, y: 40 },
+  'BN_023': { x: 350, y: 40 },
+  'BN_009': { x: 300, y: 140 },
+  'BN_011': { x: 350, y: 140 },
+  'BN_002': { x: 450, y: 40 },
+  'BN_007': { x: 500, y: 40 },
+};
 
 export default function TrackDiagram() {
   const { signals, setSignal } = useSignals();
@@ -32,10 +46,12 @@ export default function TrackDiagram() {
       padding: '20px'
     }}>
       <h3 style={{ color: 'white', textAlign: 'center', margin: 0 }}>Zone 4 - Benton Signal Box (BN)</h3>
+      
       {Object.keys(signalPositions).map((id) => {
         const pos = signalPositions[id];
         const aspect = signals[id] || 'RED';
         const color = getColor(aspect);
+        
         return (
           <div
             key={id}
@@ -65,6 +81,7 @@ export default function TrackDiagram() {
           </div>
         );
       })}
+
       <div style={{
         position: 'absolute',
         bottom: '10px',
