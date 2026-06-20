@@ -1,0 +1,7 @@
+{
+  "name": "scr-signal-sim",
+  "version": "1.0.0",
+  "scripts": {
+    "vercel-build": "echo Hello"
+  }
+}
