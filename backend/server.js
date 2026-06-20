@@ -2,11 +2,16 @@
 import express from 'express';
 import { WebSocketServer } from 'ws';
 import { signals } from './data/signals.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(express.json());
 
-// Enable CORS for frontend
+// CORS (still useful for local dev)
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
@@ -14,34 +19,31 @@ app.use((req, res, next) => {
   next();
 });
 
-// In-memory state: all signals start RED
+// --- Serve the React frontend (built files) ---
+app.use(express.static(path.join(__dirname, 'public')));
+
+// --- Your existing API routes ---
 const state = {};
 signals.forEach(s => { state[s.id] = 'RED'; });
 
-// Interlocking logic: check if all conflicts are RED
 function canSetToProceed(signalId) {
   const signal = signals.find(s => s.id === signalId);
   if (!signal) return false;
   return signal.conflicts.every(id => state[id] === 'RED');
 }
 
-// Set signal aspect
 function setSignalAspect(signalId, aspect) {
   if (aspect === 'GREEN' && !canSetToProceed(signalId)) {
-    return false; // SPAD prevented
+    return false;
   }
   state[signalId] = aspect;
   return true;
 }
 
-// --- REST API Endpoints ---
-
-// Get all signal states
 app.get('/api/signals', (req, res) => {
   res.json(state);
 });
 
-// Set signal to PROCEED (GREEN)
 app.post('/api/signals/:id/proceed', (req, res) => {
   const { id } = req.params;
   const success = setSignalAspect(id, 'GREEN');
@@ -51,19 +53,23 @@ app.post('/api/signals/:id/proceed', (req, res) => {
   } else {
     res.status(400).json({ 
       success: false, 
-      error: 'Conflict detected! One or more conflicting signals are not RED.' 
+      error: 'Conflict detected! Conflicting signals are not RED.' 
     });
   }
 });
 
-// Set signal to DANGER (RED)
 app.post('/api/signals/:id/danger', (req, res) => {
   state[req.params.id] = 'RED';
   broadcastState();
   res.json({ success: true });
 });
 
-// --- WebSocket Server (for real-time updates) ---
+// --- Fallback for React Router (SPA) ---
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// --- WebSocket (works locally) ---
 const server = app.listen(process.env.PORT || 3001, () => {
   console.log(`Backend running on port ${process.env.PORT || 3001}`);
 });
@@ -80,9 +86,8 @@ function broadcastState() {
 }
 
 wss.on('connection', (ws) => {
-  console.log('Client connected via WebSocket');
   ws.send(JSON.stringify(state));
 });
 
-// Export app for Vercel serverless (if running on Vercel)
+// Export for Vercel serverless
 export default app;
